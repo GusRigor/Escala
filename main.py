@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from escala.escala import gerar_escala, criar_pdf
+from escala.escala import gerar_escala
+from pdf.pdf import criar_pdf
 
 def main():
     # Dados de entrada

@@ -1,6 +1,3 @@
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import cm
 from datetime import datetime, timedelta
 
 # Dados da escala
@@ -22,35 +19,3 @@ def gerar_escala(nomes: list = nomes, turnos: list = turnos, inicio_mes: datetim
         }
         escala.append(linha)
     return escala
-
-# Cria o PDF
-def criar_pdf(escala, arquivo="escala_enfermagem.pdf"):
-    c = canvas.Canvas(arquivo, pagesize=A4)
-    largura, altura = A4
-
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(2 * cm, altura - 2 * cm, "Escala de Enfermagem - Julho 2025")
-
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(2 * cm, altura - 3 * cm, "Data")
-    c.drawString(5 * cm, altura - 3 * cm, "Manhã")
-    c.drawString(10 * cm, altura - 3 * cm, "Tarde")
-    c.drawString(15 * cm, altura - 3 * cm, "Noite")
-
-    c.setFont("Helvetica", 11)
-    y = altura - 3.7 * cm
-
-    for dia in escala:
-        c.drawString(2 * cm, y, dia["data"])
-        c.drawString(5 * cm, y, dia["Manhã"])
-        c.drawString(10 * cm, y, dia["Tarde"])
-        c.drawString(15 * cm, y, dia["Noite"])
-        y -= 0.6 * cm
-
-        if y < 2 * cm:
-            c.showPage()
-            y = altura - 3 * cm
-            c.setFont("Helvetica", 11)
-
-    c.save()
-    print(f"✅ PDF gerado com sucesso: {arquivo}")
