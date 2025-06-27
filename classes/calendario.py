@@ -3,7 +3,7 @@ from classes.atividade import Atividade
 import calendar
 
 class Calendario:
-    def __init__(self, data:date, atividades:[Atividade]):
+    def __init__(self, data:date, atividades:list[Atividade]):
         self.data = data
         self.atividades = atividades
 
