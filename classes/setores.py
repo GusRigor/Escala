@@ -1,5 +1,5 @@
 
-from classes.tipoAtividade import TipoAtividade
+from classes.tipoAtividade import TipoAtividade, TipoAtividadeComplementar
 from classes.atividade import Atividade
 
 class Setores:
@@ -18,7 +18,17 @@ class Setores:
 
 class Setor:
     def __init__(self, tipoAtividade: TipoAtividade):
+        if isinstance(tipoAtividade, TipoAtividadeComplementar):
+            self._init_complementar_(tipoAtividade)
+        else:
+            self._init_padrao_(tipoAtividade)
+
+    def _init_padrao_(self, tipoAtividade: TipoAtividade):
         self.nome = tipoAtividade.nome
+        self.sigla = tipoAtividade.sigla
+
+    def _init_complementar_(self, tipoAtividade: TipoAtividadeComplementar):
+        self.nome = f"{tipoAtividade.nome} ({tipoAtividade.sigla_complementar})"
         self.sigla = tipoAtividade.sigla
 
     def __str__(self):
