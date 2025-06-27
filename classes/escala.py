@@ -1,4 +1,5 @@
 from classes.memoriaCalculo import MemoriaCalculo
+from classes.setores import Setores
 from classes.calendario import Calendario
 
 class Escala:
@@ -10,6 +11,7 @@ class Escala:
         self.calendario = calendario
         self.memoria_calculo_hospital = MemoriaCalculo('P', calendario.atividades)
         self.memoria_calculo_teorica = MemoriaCalculo('T', calendario.atividades)
+        self.descritivo_setores = Setores(calendario.atividades)
 
 
     def __str__(self):
@@ -18,4 +20,5 @@ class Escala:
                f"Preceptores: {', '.join(self.preceptores)}\n" \
                f"Calendário: {self.calendario}\n" \
                f"Memória de cálculo hospitalar: {self.memoria_calculo_hospital.descritivo} = {self.memoria_calculo_hospital.total}h\n" \
-               f"Memória de cálculo teórica: {self.memoria_calculo_teorica.descritivo} = {self.memoria_calculo_teorica.total}h"
+               f"Memória de cálculo teórica: {self.memoria_calculo_teorica.descritivo} = {self.memoria_calculo_teorica.total}h\n" \
+               f"Setores:\n{self.descritivo_setores}"
