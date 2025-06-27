@@ -6,24 +6,17 @@ class MemoriaCalculo:
         self.total = 0
         self.descritivo = []
         self._calculo_total_(atividades)
-        self._descritivo_tipo_atividade_(atividades)
+        self._descritivo_por_tipo_atividade_(atividades)
 
     def _calculo_total_(self, atividades):
         for atividade in atividades:
             if atividade.tipo.tipo == self.tipo:
                 self.total += atividade.tipo.duracao
 
-    def _descritivo_tipo_atividade_(self, atividades:list[Atividade]):
-        siglas = self._siglas_unicas_(atividades)
+    def _descritivo_por_tipo_atividade_(self, atividades:list[Atividade]):
+        siglas = {atividade.tipo.sigla for atividade in atividades}
         quantidade_por_atividade = self._quantidade_por_atividade_(atividades, siglas)
         self.descritivo = self._quantidade_por_atividade_para_descritivo_(quantidade_por_atividade)
-    
-    def _siglas_unicas_(self, atividades:list[Atividade]):
-        siglas = set()
-        for atividade in atividades:
-            if atividade.tipo.tipo == self.tipo:
-                siglas.add(atividade.tipo.sigla)
-        return siglas
     
     def _quantidade_por_atividade_(self, atividades:list[Atividade], siglas):
         quantidade_por_atividade = []
