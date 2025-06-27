@@ -2,6 +2,7 @@ from datetime import date
 from classes.atividade import Atividade
 from classes.tipoAtividade import TipoAtividadeVazia
 from enums.turno import Turno
+from enums.tipoMemoria import TipoMemoria
 import calendar
 
 class Calendario:
@@ -9,6 +10,7 @@ class Calendario:
         self.data = data
         self.atividades_inseridas = atividades
         self.atividades = self._criar_atividades_vazias_()
+        self.atividades = self._adicionar_atividades_inseridas()
 
     def inicio_mes(self):
         return date(self.data.year, self.data.month, 1)
@@ -29,3 +31,23 @@ class Calendario:
                 atividade = Atividade(tipo_atividade_vazia, turno, dia_atual)
                 atividades_criadas.append(atividade)
         return atividades_criadas
+    
+    def _adicionar_atividades_inseridas(self):
+        for atividade in self.atividades_inseridas:
+            for i, atividade_criada in enumerate(self.atividades):
+                if (atividade_criada.dia == atividade.dia and
+                        atividade_criada.turno == atividade.turno):
+                    self.atividades[i] = atividade
+                    break
+        return self.atividades
+    
+    def adicionar_atividade(self, atividade:Atividade):
+        for i, atividade_criada in enumerate(self.atividades):
+            if (atividade_criada.dia == atividade.dia and
+                    atividade_criada.turno == atividade.turno and
+                    atividade_criada.tipo.tipo == TipoMemoria.VAZIA):
+                print(f"Substituindo atividade vazia no dia {atividade.dia} turno {atividade.turno}")
+                print(f"Atividade anterior: {atividade_criada}")
+                print(f"Nova atividade: {atividade}")
+                self.atividades[i] = atividade
+                return
