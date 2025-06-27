@@ -1,4 +1,5 @@
 from classes.atividade import Atividade
+from enums.tipoMemoria import TipoMemoria
 
 class MemoriaCalculo:
     def __init__(self, tipo, atividades:list[Atividade]):
@@ -10,7 +11,7 @@ class MemoriaCalculo:
 
     def _calculo_total_(self, atividades):
         for atividade in atividades:
-            if atividade.tipo.tipo == self.tipo:
+            if atividade.tipo.tipo == self.tipo and atividade.tipo.tipo != TipoMemoria.VAZIA:
                 self.total += atividade.tipo.duracao
 
     def _descritivo_por_tipo_atividade_(self, atividades:list[Atividade]):
@@ -37,5 +38,6 @@ class MemoriaCalculo:
         for item in quantidade_por_atividade:
             atividade = item['atividade']
             quantidade = item['quantidade']
-            descritivo.append(f"{atividade.tipo.sigla}-{atividade.tipo.duracao}={quantidade}x{atividade.tipo.duracao}={quantidade * atividade.tipo.duracao}h")
+            if atividade.tipo.tipo != TipoMemoria.VAZIA:
+                descritivo.append(f"{atividade.tipo.sigla}-{atividade.tipo.duracao}={quantidade}x{atividade.tipo.duracao}={quantidade * atividade.tipo.duracao}h")
         return descritivo
