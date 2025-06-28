@@ -1,4 +1,6 @@
+# -------------------------
 # Arquivos e pastas do Python
+# -------------------------
 __pycache__/
 *.py[cod]
 *.pyo
@@ -18,13 +20,54 @@ ENV/
 *.bak
 *.old
 
-# PDF gerado (opcional, se você não quiser versionar o PDF)
-*.pdf
+# -------------------------
+# Arquivos temporários do LaTeX
+# -------------------------
+*.aux
+*.bbl
+*.blg
+*.brf
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.out
+*.toc
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
 
+# Arquivos de saída (PDF, DVI, etc.)
+*.pdf
+*.dvi
+*.ps
+*.xdv
+
+# Diretórios temporários LaTeX
+_build/
+build/
+output/
+latex.out/
+
+# -------------------------
 # Configurações de IDEs
+# -------------------------
 .vscode/
 .idea/
 
+# -------------------------
 # Arquivos do sistema operacional
+# -------------------------
 .DS_Store
 Thumbs.db
