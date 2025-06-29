@@ -1,6 +1,7 @@
 from classes.escala import Escala
 from classes.modelos.cabecalho import Cabecalho
 from classes.modelos.memoria import Memoria
+from classes.modelos.atividades import Atividades
 
 class Conversor:
     def converter_escala_para_cabecalho(self, escala: Escala) -> Cabecalho:
@@ -22,3 +23,9 @@ class Conversor:
             memoria_total_horas_teorico=escala.memoria_calculo_teorica.total
         )
         return memoria
+    
+    def converter_escala_para_atividades(self, escala: Escala) -> Atividades:
+        setores = [str(setor) for setor in escala.descritivo_setores.setores if len(str(setor)) > 3]
+        print(f"Setores convertidos: {setores}")
+        atividades = Atividades(setores)
+        return atividades
