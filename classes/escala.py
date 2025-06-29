@@ -1,6 +1,7 @@
 from classes.memoriaCalculo import MemoriaCalculo
 from classes.setores import Setores
 from classes.calendario import Calendario
+from enums.tipoMemoria import TipoMemoria
 
 class Escala:
     def __init__(self, instituicao, residente, setores, preceptores, calendario:Calendario):
@@ -9,8 +10,8 @@ class Escala:
         self.setores = setores
         self.preceptores = preceptores
         self.calendario = calendario
-        self.memoria_calculo_hospital = MemoriaCalculo('P', calendario.atividades)
-        self.memoria_calculo_teorica = MemoriaCalculo('T', calendario.atividades)
+        self.memoria_calculo_hospital = MemoriaCalculo(TipoMemoria.PRATICA, calendario.atividades)
+        self.memoria_calculo_teorica = MemoriaCalculo(TipoMemoria.TEORICA, calendario.atividades)
         self.descritivo_setores = Setores(calendario.atividades)
 
 

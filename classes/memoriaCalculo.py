@@ -15,7 +15,7 @@ class MemoriaCalculo:
                 self.total += atividade.tipo.duracao
 
     def _descritivo_por_tipo_atividade_(self, atividades:list[Atividade]):
-        siglas = {atividade.tipo.sigla for atividade in atividades}
+        siglas = {atividade.tipo.sigla for atividade in atividades if atividade.tipo.tipo == self.tipo}
         quantidade_por_atividade = self._quantidade_por_atividade_(atividades, siglas)
         self.descritivo = self._quantidade_por_atividade_para_descritivo_(quantidade_por_atividade)
     
