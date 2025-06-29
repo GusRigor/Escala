@@ -3,6 +3,7 @@ from classes.atividade import Atividade
 from classes.tipoAtividade import TipoAtividadeVazia
 from enums.turno import Turno
 from enums.tipoMemoria import TipoMemoria
+from utilidades.fomate_data import mes_portugues
 import calendar
 
 class Calendario:
@@ -11,6 +12,12 @@ class Calendario:
         self.atividades_inseridas = atividades
         self.atividades = self._criar_atividades_vazias_()
         self.atividades = self._adicionar_atividades_inseridas()
+
+    def mes(self):
+        return mes_portugues(calendar.month_name[self.data.month])
+    
+    def ano(self):
+        return self.data.year
 
     def inicio_mes(self):
         return date(self.data.year, self.data.month, 1)

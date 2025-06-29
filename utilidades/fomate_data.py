@@ -9,3 +9,20 @@ def dia_semana_portugues(abreviacao_ingles):
         "Sun": "D"
     }
     return dias_semana.get(abreviacao_ingles, "-")
+
+def mes_portugues(nome_ingles):
+    meses = {
+        "January": "Janeiro",
+        "February": "Fevereiro",
+        "March": "Março",
+        "April": "Abril",
+        "May": "Maio",
+        "June": "Junho",
+        "July": "Julho",
+        "August": "Agosto",
+        "September": "Setembro",
+        "October": "Outubro",
+        "November": "Novembro",
+        "December": "Dezembro"
+    }
+    return meses.get(nome_ingles, "-")
