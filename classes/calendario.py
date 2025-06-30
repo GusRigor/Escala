@@ -1,4 +1,5 @@
 from datetime import date
+from typing import List
 from classes.atividade import Atividade
 from classes.tipoAtividade import TipoAtividadeVazia
 from enums.turno import Turno
@@ -7,7 +8,7 @@ from utilidades.fomate_data import mes_portugues
 import calendar
 
 class Calendario:
-    def __init__(self, data:date, atividades:list[Atividade]):
+    def __init__(self, data:date, atividades:List[Atividade]):
         self.data = data
         self.atividades_inseridas = atividades
         self.atividades = self._criar_atividades_vazias_()

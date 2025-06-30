@@ -1,8 +1,9 @@
+from typing import List
 from classes.modelos.Renderable import Renderable
 
 class Memoria(Renderable):
-    def __init__(self, memoria_descritivo_hospital: list[str], memoria_total_horas_hospital: str,
-                 memoria_descritivo_teorico: list[str], memoria_total_horas_teorico: str):
+    def __init__(self, memoria_descritivo_hospital: List[str], memoria_total_horas_hospital: str,
+                 memoria_descritivo_teorico: List[str], memoria_total_horas_teorico: str):
         self.memoria_descritivo_hospital = memoria_descritivo_hospital
         self.memoria_total_horas_hospital = memoria_total_horas_hospital
         self.memoria_descritivo_teorico = memoria_descritivo_teorico

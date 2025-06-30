@@ -1,0 +1,24 @@
+{\fontsize{8pt}{10pt}\selectfont
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\setlength{\tabcolsep}{3.7pt}
+
+\begin{tabular}{|c|*{ {{ numero_colunas }} }{>{\centering\arraybackslash}p{0.6cm}|}}
+\hline
+\multirow{2}{*}{\textbf{\shortstack{D\\i\\a}}} 
+& {{ dias_numeros }} \\
+\cline{2-{{ numero_colunas_mais_um }}}
+& {{ dias_letras }} \\
+\hline
+\textbf{M} 
+& {{ manha }} \\
+\hline
+\textbf{T} 
+& {{ tarde }} \\
+\hline
+\textbf{N} 
+& {{ noite }} \\
+\hline
+\end{tabular}
+\end{center}
+}

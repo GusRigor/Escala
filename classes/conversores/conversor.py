@@ -1,7 +1,10 @@
 from classes.escala import Escala
+from classes.calendario import Calendario
 from classes.modelos.cabecalho import Cabecalho
 from classes.modelos.memoria import Memoria
 from classes.modelos.atividades import Atividades
+from classes.modelos.tabela import Tabela
+from enums.turno import Turno
 
 class Conversor:
     def converter_escala_para_cabecalho(self, escala: Escala) -> Cabecalho:
@@ -26,6 +29,14 @@ class Conversor:
     
     def converter_escala_para_atividades(self, escala: Escala) -> Atividades:
         setores = [str(setor) for setor in escala.descritivo_setores.setores if len(str(setor)) > 3]
-        print(f"Setores convertidos: {setores}")
         atividades = Atividades(setores)
         return atividades
+    
+    def converter_calendario_para_tabela(self, calendario: Calendario) -> Tabela:
+        dias = sorted(list({atividade.dia for atividade in calendario.atividades}))
+        manha = [atividade.tipo.sigla for atividade in calendario.atividades if atividade.turno == Turno.MANHA]
+        tarde = [atividade.tipo.sigla for atividade in calendario.atividades if atividade.turno == Turno.TARDE]
+        noite = [atividade.tipo.sigla for atividade in calendario.atividades if atividade.turno == Turno.NOITE]
+        
+        tabela = Tabela(dias, manha, tarde, noite)
+        return tabela

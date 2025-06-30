@@ -1,13 +1,13 @@
-
+from typing import List
 from classes.tipoAtividade import TipoAtividade, TipoAtividadeComplementar
 from classes.atividade import Atividade
 
 class Setores:
-    def __init__(self, atividades: list[Atividade]):
+    def __init__(self, atividades: List[Atividade]):
         self.setores = []
         self._criar_setores_unicos_(atividades)
 
-    def _criar_setores_unicos_(self, atividades: list[Atividade]):
+    def _criar_setores_unicos_(self, atividades: List[Atividade]):
         tipos_unicos = {atividade.tipo for atividade in atividades}
         for tipo in tipos_unicos:
             setor = Setor(tipo)

@@ -1,3 +1,5 @@
+from datetime import date
+
 def dia_semana_portugues(abreviacao_ingles):
     dias_semana = {
         "Mon": "S",
@@ -26,3 +28,6 @@ def mes_portugues(nome_ingles):
         "December": "Dezembro"
     }
     return meses.get(nome_ingles, "-")
+
+def eh_fim_de_semana(dia: date) -> bool:
+    return dia.weekday() >= 5
