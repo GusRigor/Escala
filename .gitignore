@@ -71,3 +71,20 @@ latex.out/
 # -------------------------
 .DS_Store
 Thumbs.db
+
+# -------------------------
+# Arquivos e pastas do Django
+# -------------------------
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+local_settings.py
+.env
+.env.*
+*.pot
+*.mo
+celerybeat-schedule
+celerybeat.pid
+*.log
