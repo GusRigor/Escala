@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Escala salva com sucesso</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f8f8;
+  }
+  .card {
+    display: inline-block;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .card h1 {
+    color: #4CAF50;
+  }
+  .button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .button:hover {
+    background: #45a049;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>✅ Escala salva com sucesso!</h1>
+  <p>Os dados da escala foram registrados no sistema.</p>
+
+  <a href="{% url 'index' %}" class="button">Voltar para o início</a>
+</div>
+
+</body>
+</html>
