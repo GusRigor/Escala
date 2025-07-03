@@ -1,0 +1,59 @@
+<h1>Calendário {{ nome_mes }}/{{ ano }}</h1>
+
+<p><strong>Instituição:</strong> {{ instituicao }}</p>
+<p><strong>Residente:</strong> {{ residente }}</p>
+<p><strong>Setores:</strong> {{ setores }}</p>
+<p><strong>Preceptores:</strong> {{ preceptores }}</p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Dom</th>
+            <th>Seg</th>
+            <th>Ter</th>
+            <th>Qua</th>
+            <th>Qui</th>
+            <th>Sex</th>
+            <th>Sáb</th>
+        </tr>
+
+        {% for semana in semanas %}
+        <tr>
+            {% for dia in semana %}
+            <td valign="top">
+                {% if dia %}
+                    <strong>{{ dia }}</strong><br>
+                    <div>Manhã:
+                        <select name="atividade_{{ dia }}_manha">
+                            <option value="">---</option>
+                            {% for atividade in atividades %}
+                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>Tarde:
+                        <select name="atividade_{{ dia }}_tarde">
+                            <option value="">---</option>
+                            {% for atividade in atividades %}
+                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>Noite:
+                        <select name="atividade_{{ dia }}_noite">
+                            <option value="">---</option>
+                            {% for atividade in atividades %}
+                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit">Salvar Escala</button>
+</form>
