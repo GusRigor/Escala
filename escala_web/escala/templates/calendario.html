@@ -1,67 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>Escala de Enfermagem - calendário</title>
+    <meta charset="UTF-8">
+    <title>Escala {{ nome_mes }}/{{ ano }}</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Calendário {{ nome_mes }}/{{ ano }}</h1>
 
-<p><strong>Instituição:</strong> {{ instituicao }}</p>
-<p><strong>Residente:</strong> {{ residente }}</p>
-<p><strong>Setores:</strong> {{ setores }}</p>
-<p><strong>Preceptores:</strong> {{ preceptores }}</p>
+    <h1>Escala de {{ nome_mes }} de {{ ano }}</h1>
 
-<form method="post" action="">
-    {% csrf_token %}
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Dom</th>
-            <th>Seg</th>
-            <th>Ter</th>
-            <th>Qua</th>
-            <th>Qui</th>
-            <th>Sex</th>
-            <th>Sáb</th>
-        </tr>
+    <p><strong>Instituição:</strong> {{ instituicao }}</p>
+    <p><strong>Residente:</strong> {{ residente }}</p>
+    <p><strong>Setores:</strong> {{ setores }}</p>
+    <p><strong>Preceptores:</strong> {{ preceptores }}</p>
 
-        {% for semana in semanas %}
-        <tr>
-            {% for dia in semana %}
-            <td valign="top">
-                {% if dia %}
-                    <strong>{{ dia }}</strong><br>
-                    <div>Manhã:
-                        <select name="atividade_{{ dia }}_manha">
-                            <option value="">---</option>
-                            {% for atividade in atividades %}
-                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>Tarde:
-                        <select name="atividade_{{ dia }}_tarde">
-                            <option value="">---</option>
-                            {% for atividade in atividades %}
-                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>Noite:
-                        <select name="atividade_{{ dia }}_noite">
-                            <option value="">---</option>
-                            {% for atividade in atividades %}
-                                <option value="{{ atividade.id }}">{{ atividade.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                {% endif %}
-            </td>
+    <form method="post">
+        {% csrf_token %}
+
+        <table>
+            <tr>
+                <th>Dia</th>
+                {% for dia in dias_do_mes %}
+                <th>{{ dia.numero }}<br>{{ dia.nome }}</th>
+                {% endfor %}
+            </tr>
+
+            {% for turno in turnos %}
+            <tr>
+                <td><strong>{{ turno|capfirst }}</strong></td>
+                {% for dia in dias_do_mes %}
+                <td>
+                    <select name="atividade_{{ dia.numero }}_{{ turno }}">
+                        <option value="">---</option>
+                        {% for atividade in atividades %}
+                        <option value="{{ atividade.id }}">{{ atividade.sigla }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
+        </table>
 
-    <button type="submit">Salvar Escala</button>
-</form>
+        <br>
+        <button type="submit">Salvar Escala</button>
+    </form>
+
 </body>
+
 </html>

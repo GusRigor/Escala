@@ -1,0 +1,1 @@
+from .fomate_data import mes_portugues
