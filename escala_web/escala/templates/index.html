@@ -4,11 +4,11 @@
     <title>Escala de Enfermagem</title>
 </head>
 <body>
-    <h1>Dados Iniciais da Escala</h1>
+    <h1>Preencha os dados da escala</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Enviar</button>
+        <button type="submit">Gerar calendário</button>
     </form>
 </body>
 </html>
