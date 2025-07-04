@@ -1,5 +1,5 @@
 from typing import List
-from classes.modelos.Renderable import Renderable
+from source.classes.modelos.Renderable import Renderable
 
 class Memoria(Renderable):
     def __init__(self, memoria_descritivo_hospital: List[str], memoria_total_horas_hospital: str,

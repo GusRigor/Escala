@@ -1,11 +1,10 @@
+import calendar
 from datetime import date
 from typing import List
-from classes.atividade import Atividade
-from classes.tipoAtividade import TipoAtividadeVazia
-from enums.turno import Turno
-from enums.tipoMemoria import TipoMemoria
-from utilidades.fomate_data import mes_portugues
-import calendar
+from source.classes.atividade import Atividade
+from source.classes.tipoAtividade import TipoAtividadeVazia
+from source.enums import Turno, TipoMemoria
+from source.utilidades import mes_portugues
 
 class Calendario:
     def __init__(self, data:date, atividades:List[Atividade]):

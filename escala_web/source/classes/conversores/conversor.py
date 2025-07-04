@@ -1,10 +1,10 @@
-from classes.escala import Escala
-from classes.calendario import Calendario
-from classes.modelos.cabecalho import Cabecalho
-from classes.modelos.memoria import Memoria
-from classes.modelos.atividades import Atividades
-from classes.modelos.tabela import Tabela
-from enums.turno import Turno
+from source.classes.escala import Escala
+from source.classes.calendario import Calendario
+from source.classes.modelos.cabecalho import Cabecalho
+from source.classes.modelos.memoria import Memoria
+from source.classes.modelos.atividades import Atividades
+from source.classes.modelos.tabela import Tabela
+from source.enums import Turno
 
 class Conversor:
     def converter_escala_para_cabecalho(self, escala: Escala) -> Cabecalho:

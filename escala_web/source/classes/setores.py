@@ -1,6 +1,7 @@
 from typing import List
-from classes.tipoAtividade import TipoAtividade, TipoAtividadeComplementar
-from classes.atividade import Atividade
+from source.classes.tipoAtividade import TipoAtividade, TipoAtividadeComplementar, TipoAtividadeVazia
+from source.classes.atividade import Atividade
+from source.enums import TipoMemoria
 
 class Setores:
     def __init__(self, atividades: List[Atividade]):
@@ -8,7 +9,8 @@ class Setores:
         self._criar_setores_unicos_(atividades)
 
     def _criar_setores_unicos_(self, atividades: List[Atividade]):
-        tipos_unicos = {atividade.tipo for atividade in atividades}
+        tipos_unicos = {atividade.tipo for atividade in atividades if atividade.tipo.tipo != TipoMemoria.VAZIA}
+        print(tipos_unicos)
         for tipo in tipos_unicos:
             setor = Setor(tipo)
             self.setores.append(setor)
@@ -30,6 +32,6 @@ class Setor:
     def _init_complementar_(self, tipoAtividade: TipoAtividadeComplementar):
         self.nome = f"{tipoAtividade.nome} ({tipoAtividade.sigla_complementar})"
         self.sigla = tipoAtividade.sigla
-
+    
     def __str__(self):
         return f"{self.sigla} - {self.nome}"

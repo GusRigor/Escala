@@ -1,7 +1,7 @@
-from classes.memoriaCalculo import MemoriaCalculo
-from classes.setores import Setores
-from classes.calendario import Calendario
-from enums.tipoMemoria import TipoMemoria
+from source.classes.memoriaCalculo import MemoriaCalculo
+from source.classes.setores import Setores
+from source.classes.calendario import Calendario
+from source.enums.tipoMemoria import TipoMemoria
 
 class Escala:
     def __init__(self, instituicao, residente, setores, preceptores, calendario:Calendario):

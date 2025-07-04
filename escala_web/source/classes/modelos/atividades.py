@@ -1,5 +1,5 @@
 from typing import List
-from classes.modelos.Renderable import Renderable
+from source.classes.modelos.Renderable import Renderable
 
 class Atividades(Renderable):
     def __init__(self, atividades: List[str]):

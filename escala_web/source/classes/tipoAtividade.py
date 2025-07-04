@@ -1,4 +1,4 @@
-from enums.tipoMemoria import TipoMemoria
+from source.enums.tipoMemoria import TipoMemoria
 
 class TipoAtividade:
     def __init__(self, nome, sigla, duracao, tipo:TipoMemoria):

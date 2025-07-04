@@ -1,6 +1,6 @@
 from typing import List
-from classes.atividade import Atividade
-from enums.tipoMemoria import TipoMemoria
+from source.classes.atividade import Atividade
+from source.enums.tipoMemoria import TipoMemoria
 
 class MemoriaCalculo:
     def __init__(self, tipo:TipoMemoria, atividades:List[Atividade]):

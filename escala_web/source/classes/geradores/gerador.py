@@ -1,11 +1,11 @@
 import subprocess
 from jinja2 import Template
-from classes.escala import Escala
-from classes.conversores.conversor import Conversor
-from classes.modelos.cabecalho import Cabecalho
-from classes.modelos.tabela import Tabela
-from classes.modelos.memoria import Memoria
-from classes.modelos.atividades import Atividades
+from source.classes.escala import Escala
+from source.classes.conversores.conversor import Conversor
+from source.classes.modelos.cabecalho import Cabecalho
+from source.classes.modelos.tabela import Tabela
+from source.classes.modelos.memoria import Memoria
+from source.classes.modelos.atividades import Atividades
 
 class Gerador:
     @staticmethod

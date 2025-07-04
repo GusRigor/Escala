@@ -31,3 +31,6 @@ def mes_portugues(nome_ingles):
 
 def eh_fim_de_semana(dia: date) -> bool:
     return dia.weekday() >= 5
+
+def to_date(ano: int, mes: int) -> date:
+    return date(ano, mes, 1)

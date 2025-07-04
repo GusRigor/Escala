@@ -1,7 +1,7 @@
 from typing import List
 from datetime import date
-from classes.modelos.Renderable import Renderable
-from utilidades.fomate_data import eh_fim_de_semana, dia_semana_portugues
+from source.classes.modelos.Renderable import Renderable
+from source.utilidades.fomate_data import eh_fim_de_semana, dia_semana_portugues
 
 class Tabela(Renderable):
     def __init__(self, dias: List[date], manha: List[str], tarde: List[str], noite: List[str]):

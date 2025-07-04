@@ -1,7 +1,7 @@
-from utilidades.fomate_data import dia_semana_portugues
+from source.utilidades.fomate_data import dia_semana_portugues
 from datetime import date
-from classes.tipoAtividade import TipoAtividade
-from enums.turno import Turno
+from source.classes.tipoAtividade import TipoAtividade
+from source.enums import Turno
 
 class Atividade:
     def __init__(self, tipo:TipoAtividade, turno:Turno, dia:date):

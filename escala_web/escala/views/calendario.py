@@ -2,7 +2,11 @@ from django.shortcuts import render
 import calendar
 from datetime import date
 from ..models import TipoAtividade
-from source.utilidades import mes_portugues
+from source.utilidades import mes_portugues, to_date
+from source.classes.conversores import Conversor_HTML
+from source.classes.tipoAtividade import TipoAtividadeVazia
+from source.classes.calendario import Calendario
+from source.classes.escala import Escala
 
 def calendario(request, ano, mes):
     ano = int(ano)
@@ -43,17 +47,16 @@ def calendario(request, ano, mes):
     return render(request, "calendario.html", contexto)
 
 def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
+    conversor = Conversor_HTML()
+    data = to_date(ano, mes)
+    atividades = []
+
     # Dados fixos do contexto
     instituicao = request.session.get('instituicao')
     residente = request.session.get('residente')
     setores = request.session.get('setores')
     preceptores = request.session.get('preceptores')
 
-    print(f"Instituição: {instituicao}")
-    print(f"Residente: {residente}")
-    print(f"Setores: {setores}")
-    print(f"Preceptores: {preceptores}")
-    print(f"Ano/Mês: {ano}/{mes}")
 
         # Dados preenchidos no calendário
     for dia in dias_do_mes:
@@ -62,12 +65,37 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
             key = f"atividade_{numero}_{turno}"
             atividade_id = request.POST.get(key)
             if atividade_id:
-                print(f"Dia {numero}, Turno {turno}: Atividade {atividade_id}")
+                atividade = TipoAtividade.objects.get(id=atividade_id)
+                tipoAtividade = conversor.converter_para_tipo_atividade(
+                    nome=atividade.nome,
+                    sigla=atividade.sigla,
+                    duracao=atividade.duracao,
+                    tipo=atividade.tipo,
+                    sigla_complementar=atividade.sigla_complementar
+                )
+                atividade_model = conversor.converter_para_atividade(
+                    tipo=tipoAtividade,
+                    turno=turno,
+                    dia=date(ano, mes, numero)
+                )
+                atividades.append(atividade_model)
             else:
-                print(f"Dia {numero}, Turno {turno}: [vazio]")
+                atividade_model = conversor.converter_para_atividade(
+                    tipo=TipoAtividadeVazia(),
+                    turno=turno,
+                    dia=date(ano, mes, numero)
+                )
+                atividades.append(atividade_model)
+    calendario_model = Calendario(to_date(ano, mes), atividades)
+    escala = Escala(
+        instituicao,
+        residente,
+        setores,
+        preceptores,
+        calendario_model
+    )
 
-        # Aqui você pode salvar no banco, ou gerar um PDF, etc.
-        # return redirect('alguma_view_sucesso')
-        # ou renderizar uma página de sucesso
+    print(escala)
+
     return render(request, "sucesso.html", {})
 

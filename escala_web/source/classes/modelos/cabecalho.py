@@ -1,4 +1,4 @@
-from classes.modelos.Renderable import Renderable
+from source.classes.modelos.Renderable import Renderable
 
 class Cabecalho(Renderable):
 
