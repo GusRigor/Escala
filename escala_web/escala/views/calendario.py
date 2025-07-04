@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 import calendar
 from datetime import date
 from ..models import TipoAtividade
@@ -98,5 +99,8 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
 
     Gerador.gerar_escala(escala)
 
-    return render(request, "sucesso.html", {})
+    contexto = {
+        "link_pdf": reverse('download_pdf')
+    }
+    return render(request, "sucesso.html", contexto)
 
