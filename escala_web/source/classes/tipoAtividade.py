@@ -9,6 +9,14 @@ class TipoAtividade:
 
     def __str__(self):
         return f"{self.sigla} - {self.nome}, tipo {self.tipo.value}  duração {self.duracao} horas"
+    
+    def __eq__(self, other):
+        if not isinstance(other, TipoAtividade):
+            return False
+        return (self.nome, self.sigla, self.tipo) == (other.nome, other.sigla, other.tipo)
+
+    def __hash__(self):
+        return hash((self.nome, self.sigla, self.tipo))
 
 class TipoAtividadeComplementar(TipoAtividade):
     def __init__(self, sigla_complementar):
@@ -17,6 +25,14 @@ class TipoAtividadeComplementar(TipoAtividade):
 
     def __str__(self):
         return f"{self.sigla} - {self.nome} ({self.sigla_complementar}), tipo {self.tipo.value}  duração {self.duracao} horas"
+    
+    def __eq__(self, other):
+        if not isinstance(other, TipoAtividadeComplementar):
+            return False
+        return (self.nome, self.sigla, self.tipo, self.sigla_complementar) == (other.nome, other.sigla, other.tipo, other.sigla_complementar)
+
+    def __hash__(self):
+        return hash((self.nome, self.sigla, self.tipo, self.sigla_complementar))
 
 class TipoAtividadeVazia(TipoAtividade):
     def __init__(self):

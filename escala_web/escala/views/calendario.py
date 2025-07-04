@@ -7,6 +7,7 @@ from source.classes.conversores import Conversor_HTML
 from source.classes.tipoAtividade import TipoAtividadeVazia
 from source.classes.calendario import Calendario
 from source.classes.escala import Escala
+from source.classes.geradores.gerador import Gerador
 
 def calendario(request, ano, mes):
     ano = int(ano)
@@ -29,7 +30,7 @@ def calendario(request, ano, mes):
     turnos = ['M', 'T', 'N']
 
     if request.method == "POST":
-        _calendario_post_(request, ano, mes, turnos, dias_do_mes)
+        return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
 
     contexto = {
         "instituicao": request.session.get('instituicao'),
@@ -95,7 +96,7 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
         calendario_model
     )
 
-    print(escala)
+    Gerador.gerar_escala(escala)
 
     return render(request, "sucesso.html", {})
 

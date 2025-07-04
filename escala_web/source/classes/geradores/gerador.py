@@ -15,46 +15,46 @@ class Gerador:
 
     @staticmethod
     def _gerar_cabecalho_(cabecalho: Cabecalho):
-        with open("latex/escala/templates/cabecalho.tex", "r", encoding="utf-8") as f:
+        with open("source/latex/escala/templates/cabecalho.tex", "r", encoding="utf-8") as f:
             cabecalho_template = Template(f.read())
     
         cabecalho_dados = cabecalho.render()
         rendered_cabecalho = cabecalho_template.render(cabecalho_dados)
     
-        with open("latex/escala/cabecalho.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/cabecalho.tex", "w", encoding="utf-8") as f:
             f.write(rendered_cabecalho)
     
     @staticmethod
     def _gerar_tabela_(tabela: Tabela):
-        with open("latex/escala/templates/tabela.tex", "r", encoding="utf-8") as f:
+        with open("source/latex/escala/templates/tabela.tex", "r", encoding="utf-8") as f:
             tabela_template = Template(f.read())
         
         tabela_dados = tabela.render()
         rendered_tabela = tabela_template.render(tabela_dados)
         
-        with open("latex/escala/tabela.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/tabela.tex", "w", encoding="utf-8") as f:
             f.write(rendered_tabela)
 
     @staticmethod
     def _gerar_memoria_(memoria: Memoria):
-        with open("latex/escala/templates/memoria.tex", "r", encoding="utf-8") as f:
+        with open("source/latex/escala/templates/memoria.tex", "r", encoding="utf-8") as f:
             memoria_template = Template(f.read())
         
         memoria_dados = memoria.render()
         rendered_memoria = memoria_template.render(memoria_dados)
         
-        with open("latex/escala/memoria.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/memoria.tex", "w", encoding="utf-8") as f:
             f.write(rendered_memoria)
     
     @staticmethod
     def _gerar_atividades_(atividades: Atividades):
-        with open("latex/escala/templates/atividades.tex", "r", encoding="utf-8") as f:
+        with open("source/latex/escala/templates/atividades.tex", "r", encoding="utf-8") as f:
             atividades_template = Template(f.read())
         
         atividades_dados = atividades.render()
         rendered_atividades = atividades_template.render(atividades_dados)
         
-        with open("latex/escala/atividades.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/atividades.tex", "w", encoding="utf-8") as f:
             f.write(rendered_atividades)
     
     @staticmethod
@@ -69,15 +69,15 @@ class Gerador:
         Gerador._gerar_memoria_(memoria)
         Gerador._gerar_atividades_(atividades)
 
-        with open("latex/escala.tex", "r", encoding="utf-8") as f:
+        with open("source/latex/escala.tex", "r", encoding="utf-8") as f:
             template = Template(f.read())
         
         rendered_tex = template.render()
 
-        with open("latex/main.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/main.tex", "w", encoding="utf-8") as f:
             f.write(rendered_tex)
         subprocess.run([
             "pdflatex",
-            "-output-directory=latex",
-            "latex/main.tex"
+            "-output-directory=source/latex",
+            "source/latex/main.tex"
         ])
