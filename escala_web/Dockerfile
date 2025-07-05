@@ -1,23 +1,34 @@
-# Usa uma imagem oficial Python 3.8 slim
 FROM python:3.8-slim
 
-# Defina a pasta de trabalho dentro do container
+# Defina a pasta de trabalho
 WORKDIR /app
+
+# Instale LaTeX e dependências do sistema
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        texlive-latex-base \
+        texlive-latex-recommended \
+        texlive-fonts-recommended \
+        texlive-latex-extra \
+        ghostscript \
+        make \
+        build-essential \
+        && rm -rf /var/lib/apt/lists/*
 
 # Copie os arquivos de dependências
 COPY requirements.txt /app/
 
-# Instale as dependências do Python
+# Instale dependências Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copie o restante do código para dentro do container
+# Copie o código
 COPY . /app/
 
-# Expõe a porta que o Django vai rodar (default 8000)
+# Exponha a porta
 EXPOSE 8000
 
-# Define a variável de ambiente para evitar buffer de saída e acelerar logs
+# Saída não-bufferizada para logs
 ENV PYTHONUNBUFFERED=1
 
-# Comando padrão para rodar seu servidor Django
+# Comando para iniciar o Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
