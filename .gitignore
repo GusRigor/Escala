@@ -48,6 +48,13 @@ ENV/
 *.snm
 *.vrb
 
+# -------------------------
+# Arquivos gerados pelo LaTeX
+# -------------------------
+
+source/latex/escala/*.tex
+source/latex/main.tex
+
 # Arquivos de saída (PDF, DVI, etc.)
 *.pdf
 *.dvi
