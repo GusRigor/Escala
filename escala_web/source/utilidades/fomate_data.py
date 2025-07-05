@@ -27,6 +27,24 @@ def mes_portugues(nome_ingles):
         "November": "Novembro",
         "December": "Dezembro"
     }
+    
+    meses_numero = {
+        "1": "Janeiro",
+        "2": "Fevereiro",
+        "3": "Março",
+        "4": "Abril",
+        "5": "Maio",
+        "6": "Junho",
+        "7": "Julho",
+        "8": "Agosto",
+        "9": "Setembro",
+        "10": "Outubro",
+        "11": "Novembro",
+        "12": "Dezembro"
+    }
+
+    if str(nome_ingles).isdigit():
+        return meses_numero.get(str(int(nome_ingles)), "-")
     return meses.get(nome_ingles, "-")
 
 def eh_fim_de_semana(dia: date) -> bool:

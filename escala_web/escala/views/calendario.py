@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse
 import calendar
 from datetime import date
-from ..models import TipoAtividade
+from ..models import TipoAtividade, EscalaDia, EscalaMensal
 from source.utilidades import mes_portugues, to_date
 from source.classes.conversores import Conversor_HTML
 from source.classes.tipoAtividade import TipoAtividadeVazia
@@ -45,6 +45,13 @@ def calendario(request, ano, mes):
         "atividades": atividades,
         "turnos": turnos,
     }
+    
+    _resgata_escala_(
+        request=request,
+        ano=ano,
+        mes=mes,
+        contexto=contexto
+    )
 
     return render(request, "calendario.html", contexto)
 
@@ -96,6 +103,18 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
         preceptores,
         calendario_model
     )
+    
+    _salva_escala_(
+        request=request,
+        instituicao=instituicao,
+        residente=residente,
+        setores=setores,
+        preceptores=preceptores,
+        ano=ano,
+        mes=mes,
+        dias_do_mes=dias_do_mes,
+        turnos=turnos
+    )
 
     Gerador.gerar_escala(escala)
 
@@ -104,3 +123,51 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     }
     return render(request, "sucesso.html", contexto)
 
+def _salva_escala_(request, instituicao, residente, setores, preceptores, ano, mes, dias_do_mes, turnos):
+    # cria ou atualiza a escala do mês
+    escala_db, created = EscalaMensal.objects.update_or_create(
+        instituicao=instituicao,
+        residente=residente,
+        setores=setores,
+        preceptores=preceptores,
+        ano=ano,
+        mes=mes,
+        defaults={}
+    )
+
+    # limpa os dias anteriores caso esteja atualizando
+    if not created:
+        escala_db.dias.all().delete()
+
+    # salva os dias/turnos
+    for dia in dias_do_mes:
+        numero = dia['numero']
+        for turno in turnos:
+            key = f"atividade_{numero}_{turno}"
+            atividade_id = request.POST.get(key)
+            atividade = TipoAtividade.objects.filter(id=atividade_id).first() if atividade_id else None
+
+            EscalaDia.objects.create(
+                escala=escala_db,
+                dia=numero,
+                turno=turno,
+                atividade=atividade
+            )
+
+def _resgata_escala_(request, ano, mes, contexto):
+    escala_salva = EscalaMensal.objects.filter(
+        ano=ano,
+        mes=mes
+    ).prefetch_related('dias').first()
+    
+    print(escala_salva)
+
+    atividades_pre_selecionadas = {}
+    if escala_salva:
+        for dia in escala_salva.dias.all():
+            atividades_pre_selecionadas[f"{dia.dia}_{dia.turno}"] = str(dia.atividade_id) if dia.atividade_id else ""
+    print(atividades_pre_selecionadas)
+
+    contexto.update({
+        "atividades_pre_selecionadas": atividades_pre_selecionadas
+    })
