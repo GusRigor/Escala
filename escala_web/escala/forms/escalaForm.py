@@ -1,6 +1,6 @@
 from django import forms
-from .models.preceptor import Preceptor
-from .models.setor import Setor
+from ..models.preceptor import Preceptor
+from ..models.setor import Setor
 
 class EscalaForm(forms.Form):
     instituicao = forms.CharField(

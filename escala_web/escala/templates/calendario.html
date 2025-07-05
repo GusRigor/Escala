@@ -79,7 +79,8 @@ select:focus {
 }
 
 button {
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-right: 5px;
   background: #4CAF50;
   color: white;
   padding: 8px 16px;
@@ -89,6 +90,14 @@ button {
 }
 button:hover {
   background: #45a049;
+}
+pre {
+  background: #eee;
+  padding: 10px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  border-radius: 4px;
+  margin-top: 20px;
 }
 </style>
 </head>
@@ -110,8 +119,15 @@ button:hover {
       {% endfor %}
   </p>
 
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+
+    <p>
+      <strong>Enviar foto da escala:</strong><br>
+      <input type="file" name="foto_escala" accept="image/*">
+    </p>
+
+    <button type="submit" name="acao" value="processar_foto">📷 Processar Foto</button>
 
     <table>
       <thead>
@@ -162,8 +178,13 @@ button:hover {
       </tbody>
     </table>
 
-    <button type="submit">Salvar Escala</button>
+    <button type="submit" name="acao" value="salvar_escala">💾 Salvar Escala</button>
   </form>
+
+  {% if ocr_texto %}
+    <h3>Texto reconhecido da foto:</h3>
+    <pre>{{ ocr_texto }}</pre>
+  {% endif %}
 </div>
 
 </body>

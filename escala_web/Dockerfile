@@ -15,6 +15,8 @@ RUN apt-get update && \
         build-essential \
         && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6
+
 # Copie os arquivos de dependências
 COPY requirements.txt /app/
 
