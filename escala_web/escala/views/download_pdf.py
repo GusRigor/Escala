@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 def download_pdf(request):
-    caminho_pdf = os.path.join('source', 'latex', 'main.pdf')
+    caminho_pdf = os.path.join('source', 'latex', 'main.temp.pdf')
     if not os.path.exists(caminho_pdf):
         raise Http404("Arquivo não encontrado")
 
