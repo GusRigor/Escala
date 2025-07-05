@@ -52,8 +52,7 @@ ENV/
 # Arquivos gerados pelo LaTeX
 # -------------------------
 
-source/latex/escala/*.tex
-source/latex/main.tex
+*.temp.*
 
 # Arquivos de saída (PDF, DVI, etc.)
 *.pdf
