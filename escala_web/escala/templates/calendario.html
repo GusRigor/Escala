@@ -6,86 +6,165 @@
 <meta charset="UTF-8">
 <title>Calendário de Escala</title>
 <style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 30px;
+  text-align: center;
+}
+
+.card {
+  display: inline-block;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  text-align: left;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+h1 {
+  color: #4CAF50;
+}
+
+p strong {
+  color: #4CAF50;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
+  margin-top: 20px;
+  font-size: 12px;
 }
 th, td {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   padding: 4px;
   text-align: center;
-  font-size: 12px;
 }
 thead {
-  background: #f0f0f0;
+  background: #e8f5e9;
 }
+tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Estilo para colunas de fim de semana */
+.col-fds {
+  background-color: #2e7d32a7; /* verde escuro */
+  color: white;
+}
+
 select {
   font-size: 12px;
+  width: 100%;
+  min-width: 40px;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  padding: 2px 4px;
+  transition: border-color 0.3s ease;
+
+  -webkit-appearance: none;  /* Safari e Chrome */
+  -moz-appearance: none;     /* Firefox */
+  appearance: none;
+  background-image: none;
+  cursor: pointer;
+}
+select:focus {
+  outline: none;
+  border-bottom: 2px solid #4CAF50;
+}
+
+button {
+  margin-top: 20px;
+  background: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background: #45a049;
 }
 </style>
 </head>
 <body>
 
-    <h1>Escala de {{ nome_mes }} de {{ ano }}</h1>
+<div class="card">
+  <h1>Escala de {{ nome_mes }} de {{ ano }}</h1>
 
-    <p><strong>Instituição:</strong> {{ instituicao }}</p>
-    <p><strong>Residente:</strong> {{ residente }}</p>
-    <p><strong>Setores:</strong>
-        {% for setor in setores %}
-            {{ setor.nome }}
-        {% endfor %}
-    </p>
-    <p><strong>Preceptores:</strong>
-        {% for preceptor in preceptores %}
-            {{ preceptor.nome }}
-        {% endfor %}
-    </p>
-
-<form method="post">
-  {% csrf_token %}
-
-  <table>
-    <thead>
-      <tr>
-        <th>Turno</th>
-        {% for dia in dias_do_mes %}
-          <th>{{ dia.numero }}<br>{{ dia.nome }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for turno in turnos %}
-      <tr>
-        <td><strong>{{ turno|capfirst }}</strong></td>
-
-        {% for dia in dias_do_mes %}
-        <td>
-          <select name="atividade_{{ dia.numero }}_{{ turno }}">
-            <option value="">---</option>
-
-            {% with chave=dia.numero|stringformat:"s"|add:"_"|add:turno %}
-              {% for atividade in atividades %}
-                <option value="{{ atividade.id }}"
-                  {% if atividades_pre_selecionadas|get_item:chave == atividade.id|stringformat:"s" %}
-                    selected
-                  {% endif %}
-                >
-                  {{ atividade.sigla }}
-                </option>
-              {% endfor %}
-            {% endwith %}
-          </select>
-        </td>
-        {% endfor %}
-
-      </tr>
+  <p><strong>Instituição:</strong> {{ instituicao }}</p>
+  <p><strong>Residente:</strong> {{ residente }}</p>
+  <p><strong>Setores:</strong>
+      {% for setor in setores %}
+          {{ setor.nome }}{% if not forloop.last %}, {% endif %}
       {% endfor %}
-    </tbody>
-  </table>
+  </p>
+  <p><strong>Preceptores:</strong>
+      {% for preceptor in preceptores %}
+          {{ preceptor.nome }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+  </p>
 
-  <br>
-  <button type="submit">Salvar Escala</button>
-</form>
+  <form method="post">
+    {% csrf_token %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Turno</th>
+          {% for dia in dias_do_mes %}
+            <th
+              {% if dia.nome == "Sáb" or dia.nome == "Dom" %}
+                class="col-fds"
+              {% endif %}
+            >
+              {{ dia.numero }}<br>{{ dia.nome }}
+            </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for turno in turnos %}
+        <tr>
+          <td><strong>{{ turno|capfirst }}</strong></td>
+
+          {% for dia in dias_do_mes %}
+          <td
+            {% if dia.nome == "Sáb" or dia.nome == "Dom" %}
+              class="col-fds"
+            {% endif %}
+          >
+            <select name="atividade_{{ dia.numero }}_{{ turno }}">
+              <option value="">---</option>
+
+              {% with chave=dia.numero|stringformat:"s"|add:"_"|add:turno %}
+                {% for atividade in atividades %}
+                  <option value="{{ atividade.id }}"
+                    {% if atividades_pre_selecionadas|get_item:chave == atividade.id|stringformat:"s" %}
+                      selected
+                    {% endif %}
+                  >
+                    {{ atividade.sigla }}
+                  </option>
+                {% endfor %}
+              {% endwith %}
+            </select>
+          </td>
+          {% endfor %}
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit">Salvar Escala</button>
+  </form>
+</div>
 
 </body>
 </html>
