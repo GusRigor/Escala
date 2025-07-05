@@ -21,7 +21,7 @@ class Gerador:
         cabecalho_dados = cabecalho.render()
         rendered_cabecalho = cabecalho_template.render(cabecalho_dados)
     
-        with open("source/latex/escala/cabecalho.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/cabecalho.temp.tex", "w", encoding="utf-8") as f:
             f.write(rendered_cabecalho)
     
     @staticmethod
@@ -32,7 +32,7 @@ class Gerador:
         tabela_dados = tabela.render()
         rendered_tabela = tabela_template.render(tabela_dados)
         
-        with open("source/latex/escala/tabela.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/tabela.temp.tex", "w", encoding="utf-8") as f:
             f.write(rendered_tabela)
 
     @staticmethod
@@ -43,7 +43,7 @@ class Gerador:
         memoria_dados = memoria.render()
         rendered_memoria = memoria_template.render(memoria_dados)
         
-        with open("source/latex/escala/memoria.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/memoria.temp.tex", "w", encoding="utf-8") as f:
             f.write(rendered_memoria)
     
     @staticmethod
@@ -54,7 +54,7 @@ class Gerador:
         atividades_dados = atividades.render()
         rendered_atividades = atividades_template.render(atividades_dados)
         
-        with open("source/latex/escala/atividades.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/escala/atividades.temp.tex", "w", encoding="utf-8") as f:
             f.write(rendered_atividades)
     
     @staticmethod
@@ -74,10 +74,10 @@ class Gerador:
         
         rendered_tex = template.render()
 
-        with open("source/latex/main.tex", "w", encoding="utf-8") as f:
+        with open("source/latex/main.temp.tex", "w", encoding="utf-8") as f:
             f.write(rendered_tex)
         subprocess.run([
             "pdflatex",
             "-output-directory=source/latex",
-            "source/latex/main.tex"
+            "source/latex/main.temp.tex"
         ])
