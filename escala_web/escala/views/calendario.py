@@ -9,6 +9,8 @@ from source.classes.tipoAtividade import TipoAtividadeVazia
 from source.classes.calendario import Calendario
 from source.classes.escala import Escala
 from source.classes.geradores.gerador import Gerador
+from ..models.setor import Setor
+from ..models.preceptor import Preceptor
 
 def calendario(request, ano, mes):
     ano = int(ano)
@@ -29,6 +31,11 @@ def calendario(request, ano, mes):
         })
 
     turnos = ['M', 'T', 'N']
+    setores_ids = request.session.get('setores', [])
+    preceptores_ids = request.session.get('preceptores', [])
+
+    setores = Setor.objects.filter(id__in=setores_ids)
+    preceptores = Preceptor.objects.filter(id__in=preceptores_ids)
 
     if request.method == "POST":
         return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
@@ -36,8 +43,8 @@ def calendario(request, ano, mes):
     contexto = {
         "instituicao": request.session.get('instituicao'),
         "residente": request.session.get('residente'),
-        "setores": request.session.get('setores'),
-        "preceptores": request.session.get('preceptores'),
+        "setores": setores,
+        "preceptores": preceptores,
         "mes": mes,
         "ano": ano,
         "nome_mes": mes_portugues(calendar.month_name[mes]),
@@ -63,8 +70,11 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     # Dados fixos do contexto
     instituicao = request.session.get('instituicao')
     residente = request.session.get('residente')
-    setores = request.session.get('setores')
-    preceptores = request.session.get('preceptores')
+    setores_ids = request.session.get('setores', [])
+    preceptores_ids = request.session.get('preceptores', [])
+
+    setores = Setor.objects.filter(id__in=setores_ids)
+    preceptores = Preceptor.objects.filter(id__in=preceptores_ids)
 
 
         # Dados preenchidos no calendário
@@ -128,12 +138,13 @@ def _salva_escala_(request, instituicao, residente, setores, preceptores, ano, m
     escala_db, created = EscalaMensal.objects.update_or_create(
         instituicao=instituicao,
         residente=residente,
-        setores=setores,
-        preceptores=preceptores,
         ano=ano,
         mes=mes,
         defaults={}
     )
+
+    escala_db.setores.set(setores)
+    escala_db.preceptores.set(preceptores)
 
     # limpa os dias anteriores caso esteja atualizando
     if not created:
@@ -159,14 +170,11 @@ def _resgata_escala_(request, ano, mes, contexto):
         ano=ano,
         mes=mes
     ).prefetch_related('dias').first()
-    
-    print(escala_salva)
 
     atividades_pre_selecionadas = {}
     if escala_salva:
         for dia in escala_salva.dias.all():
             atividades_pre_selecionadas[f"{dia.dia}_{dia.turno}"] = str(dia.atividade_id) if dia.atividade_id else ""
-    print(atividades_pre_selecionadas)
 
     contexto.update({
         "atividades_pre_selecionadas": atividades_pre_selecionadas

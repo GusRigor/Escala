@@ -30,8 +30,16 @@ select {
 
     <p><strong>Instituição:</strong> {{ instituicao }}</p>
     <p><strong>Residente:</strong> {{ residente }}</p>
-    <p><strong>Setores:</strong> {{ setores }}</p>
-    <p><strong>Preceptores:</strong> {{ preceptores }}</p>
+    <p><strong>Setores:</strong>
+        {% for setor in setores %}
+            {{ setor.nome }}
+        {% endfor %}
+    </p>
+    <p><strong>Preceptores:</strong>
+        {% for preceptor in preceptores %}
+            {{ preceptor.nome }}
+        {% endfor %}
+    </p>
 
 <form method="post">
   {% csrf_token %}

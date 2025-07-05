@@ -9,8 +9,8 @@ def index(request):
 
             request.session['instituicao'] = cd['instituicao']
             request.session['residente'] = cd['residente']
-            request.session['setores'] = cd['setores']
-            request.session['preceptores'] = cd['preceptores']
+            request.session['setores'] = [setor.id for setor in cd['setores']]
+            request.session['preceptores'] = [preceptor.id for preceptor in cd['preceptores']]
 
             return redirect('calendario', ano=cd["mes_ano"].year, mes=cd["mes_ano"].month)
     else:

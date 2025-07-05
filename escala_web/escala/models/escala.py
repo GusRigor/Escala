@@ -1,11 +1,13 @@
 from django.db import models
+from .preceptor import Preceptor
+from .setor import Setor
 from source.utilidades import mes_portugues
 
 class EscalaMensal(models.Model):
     instituicao = models.CharField(max_length=255)
     residente = models.CharField(max_length=255)
-    setores = models.CharField(max_length=255)
-    preceptores = models.CharField(max_length=255)
+    setores = models.ManyToManyField(Setor, related_name='escalas')
+    preceptores = models.ManyToManyField(Preceptor, related_name='escalas')
     ano = models.IntegerField()
     mes = models.IntegerField()
     criado_em = models.DateTimeField(auto_now_add=True)

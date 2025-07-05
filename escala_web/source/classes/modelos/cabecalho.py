@@ -16,10 +16,10 @@ class Cabecalho(Renderable):
                f"Preceptores: {', '.join(self.preceptores)}\n"
     
     def _setores_para_render_(self):
-        return " ".join(self.setores) if self.setores else ""
+        return " ".join(setor.nome for setor in self.setores) if self.setores else ""
     
     def _preceptores_para_render_(self):
-        return " ".join(self.preceptores) if self.preceptores else ""
+        return " ".join(preceptor.nome for preceptor in self.preceptores) if self.preceptores else ""
 
     def render(self):
         return {
