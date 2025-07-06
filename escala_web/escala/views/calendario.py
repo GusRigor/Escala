@@ -15,6 +15,9 @@ from ..models.preceptor import Preceptor
 from source.classes.ocr.processa_foto import _processa_foto_
 
 def calendario(request, ano, mes):
+    from base64 import b64decode
+    import io
+
     ano = int(ano)
     mes = int(mes)
 
@@ -43,12 +46,20 @@ def calendario(request, ano, mes):
 
     if request.method == "POST":
         acao = request.POST.get("acao")
+        print("passou aqui")
 
-        if acao == "processar_foto" and 'foto_escala' in request.FILES:
-            imagem = request.FILES['foto_escala']
-            ocr_texto = _processa_foto_(imagem)
-        elif acao == "salvar_escala":
+        if acao == "salvar_escala":
+            # Salva a escala
             return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
+
+        elif acao == "processar_foto":
+            # Prioriza o campo cropped_image, se existir
+            if 'cropped_image' in request.POST:
+                imagem_base64 = request.POST['cropped_image']
+                ocr_texto = _processa_foto_(imagem_base64=imagem_base64)
+            elif 'imagem' in request.FILES:
+                imagem = request.FILES['imagem']
+                ocr_texto = _processa_foto_(imagem=imagem)
 
     contexto = {
         "instituicao": request.session.get('instituicao'),
@@ -67,6 +78,7 @@ def calendario(request, ano, mes):
     _resgata_escala_(request, ano, mes, contexto)
 
     return render(request, "calendario.html", contexto)
+
 
 def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     conversor = Conversor_HTML()

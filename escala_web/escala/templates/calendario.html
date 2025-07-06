@@ -50,9 +50,8 @@ tbody tr:nth-child(even) {
   background: #f9f9f9;
 }
 
-/* Estilo para colunas de fim de semana */
 .col-fds {
-  background-color: #2e7d32a7; /* verde escuro */
+  background-color: #2e7d32a7;
   color: white;
 }
 
@@ -66,9 +65,8 @@ select {
   background: transparent;
   padding: 2px 4px;
   transition: border-color 0.3s ease;
-
-  -webkit-appearance: none;  /* Safari e Chrome */
-  -moz-appearance: none;     /* Firefox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: none;
   cursor: pointer;
@@ -91,6 +89,7 @@ button {
 button:hover {
   background: #45a049;
 }
+
 pre {
   background: #eee;
   padding: 10px;
@@ -100,6 +99,10 @@ pre {
   margin-top: 20px;
 }
 </style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 </head>
 <body>
 
@@ -124,8 +127,14 @@ pre {
 
     <p>
       <strong>Enviar foto da escala:</strong><br>
-      <input type="file" name="foto_escala" accept="image/*">
+      <input type="file" id="foto_escala" accept="image/*">
     </p>
+
+    <div>
+      <img id="imagem-preview" style="max-width: 100%; display:none;" />
+    </div>
+
+    <input type="hidden" name="cropped_image" id="cropped_image">
 
     <button type="submit" name="acao" value="processar_foto">📷 Processar Foto</button>
 
@@ -186,6 +195,39 @@ pre {
     <pre>{{ ocr_texto }}</pre>
   {% endif %}
 </div>
+
+<script>
+let cropper;
+document.getElementById('foto_escala').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const imgPreview = document.getElementById('imagem-preview');
+  imgPreview.style.display = 'block';
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    imgPreview.src = event.target.result;
+
+    if (cropper) {
+      cropper.destroy();
+    }
+
+    cropper = new Cropper(imgPreview, {
+      aspectRatio: NaN,
+      viewMode: 1
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+document.querySelector('form').addEventListener('submit', function (e) {
+  if (cropper) {
+    const canvas = cropper.getCroppedCanvas();
+    document.getElementById('cropped_image').value = canvas.toDataURL();
+  }
+});
+</script>
 
 </body>
 </html>
