@@ -56,10 +56,16 @@ def calendario(request, ano, mes):
             # Prioriza o campo cropped_image, se existir
             if 'cropped_image' in request.POST:
                 imagem_base64 = request.POST['cropped_image']
-                ocr_texto = _processa_foto_(imagem_base64=imagem_base64)
+                ocr_texto = _processa_foto_(
+                    imagem_base64=imagem_base64,
+                    n_colunas=num_dias
+                    )
             elif 'imagem' in request.FILES:
                 imagem = request.FILES['imagem']
-                ocr_texto = _processa_foto_(imagem=imagem)
+                ocr_texto = _processa_foto_(
+                    imagem=imagem,
+                    n_colunas=num_dias
+                    )
 
     contexto = {
         "instituicao": request.session.get('instituicao'),
