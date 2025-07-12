@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.urls import reverse
 import calendar
 from datetime import date
@@ -11,13 +12,10 @@ from source.classes.escala import Escala
 from source.classes.geradores.gerador import Gerador
 from ..models.setor import Setor
 from ..models.preceptor import Preceptor
-
 from source.classes.ocr.processa_foto import _processa_foto_
+import json
 
 def calendario(request, ano, mes):
-    from base64 import b64decode
-    import io
-
     ano = int(ano)
     mes = int(mes)
 
@@ -42,30 +40,27 @@ def calendario(request, ano, mes):
     setores = Setor.objects.filter(id__in=setores_ids)
     preceptores = Preceptor.objects.filter(id__in=preceptores_ids)
 
-    ocr_texto = None
+    # POST com JSON (AJAX)
+    if request.method == "POST" and request.content_type == "application/json":
+        data = json.loads(request.body)
+        if data.get("acao") == "processar_foto":
+            imagem_base64 = data.get("cropped_image")
+            if imagem_base64:
+                texto = _processa_foto_(
+                    imagem_base64=imagem_base64,
+                    n_colunas=num_dias
+                )
+                return JsonResponse({"texto": texto})
+            else:
+                return JsonResponse({"erro": "Imagem não enviada."}, status=400)
 
+    # POST normal
     if request.method == "POST":
         acao = request.POST.get("acao")
-        print("passou aqui")
 
         if acao == "salvar_escala":
             # Salva a escala
             return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
-
-        elif acao == "processar_foto":
-            # Prioriza o campo cropped_image, se existir
-            if 'cropped_image' in request.POST:
-                imagem_base64 = request.POST['cropped_image']
-                ocr_texto = _processa_foto_(
-                    imagem_base64=imagem_base64,
-                    n_colunas=num_dias
-                    )
-            elif 'imagem' in request.FILES:
-                imagem = request.FILES['imagem']
-                ocr_texto = _processa_foto_(
-                    imagem=imagem,
-                    n_colunas=num_dias
-                    )
 
     contexto = {
         "instituicao": request.session.get('instituicao'),
@@ -78,7 +73,7 @@ def calendario(request, ano, mes):
         "dias_do_mes": dias_do_mes,
         "atividades": atividades,
         "turnos": turnos,
-        "ocr_texto": ocr_texto,
+        "ocr_texto": None,
     }
 
     _resgata_escala_(request, ano, mes, contexto)
