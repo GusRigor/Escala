@@ -1,10 +1,11 @@
-FROM python:3.8-slim
+FROM python:3.11-slim
 
 # Defina a pasta de trabalho
 WORKDIR /app
 
 # Instale LaTeX e dependências do sistema
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         texlive-latex-base \
         texlive-latex-recommended \
