@@ -46,11 +46,25 @@ def calendario(request, ano, mes):
         if data.get("acao") == "processar_foto":
             imagem_base64 = data.get("cropped_image")
             if imagem_base64:
-                texto = _processa_foto_(
+                linha1, linha2 = _processa_foto_(
                     imagem_base64=imagem_base64,
                     n_colunas=num_dias
                 )
-                return JsonResponse({"texto": texto})
+
+                tabela = [linha1, linha2]
+
+                # só para garantir: ajusta para ter num_dias colunas
+                for row in tabela:
+                    while len(row) < num_dias:
+                        row.append("")
+                    if len(row) > num_dias:
+                        row = row[:num_dias]
+
+                dias = list(range(1, num_dias+1))
+                return JsonResponse({
+                    "dias": dias,
+                    "linhas": tabela
+                })
             else:
                 return JsonResponse({"erro": "Imagem não enviada."}, status=400)
 

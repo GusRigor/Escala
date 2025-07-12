@@ -99,6 +99,24 @@ pre {
   margin-top: 20px;
 }
 
+.ocr-table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    width: 100%;
+    font-size: 12px;
+}
+.ocr-table th, .ocr-table td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+}
+.ocr-table thead {
+    background: #f0f0f0;
+}
+.ocr-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
 #modal-cropper {
   display: flex;
   align-items: center;
@@ -278,9 +296,8 @@ document.getElementById('btn-crop-confirm').addEventListener('click', () => {
   .then(res => res.json())
   .then(data => {
     document.getElementById('loading').style.display = 'none';
-    if (data.texto) {
-      document.getElementById('ocr-result').innerHTML =
-        `<h3>Texto reconhecido:</h3><pre>${data.texto}</pre>`;
+    if (data.dias && data.linhas && data.linhas.length > 0) {
+      renderTabela(data.dias, data.linhas);
     } else {
       document.getElementById('ocr-result').innerHTML =
         `<p style="color:red;">Nenhum texto encontrado.</p>`;
@@ -293,6 +310,46 @@ document.getElementById('btn-crop-confirm').addEventListener('click', () => {
       `<p style="color:red;">Erro ao processar a imagem.</p>`;
   });
 });
+
+function renderTabela(dias, linhas) {
+  const container = document.getElementById("ocr-result");
+  container.innerHTML = ""; // limpa
+
+  const table = document.createElement("table");
+  table.classList.add("ocr-table");
+
+  const thead = document.createElement("thead");
+  const trHead = document.createElement("tr");
+  const thEmpty = document.createElement("th");
+  thEmpty.textContent = "Dia";
+  trHead.appendChild(thEmpty);
+
+  dias.forEach(dia => {
+    const th = document.createElement("th");
+    th.textContent = dia;
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  linhas.forEach((linha, idx) => {
+    const tr = document.createElement("tr");
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = `Turno ${idx+1}`;
+    tr.appendChild(tdLabel);
+
+    linha.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell || "";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  container.appendChild(table);
+};
 </script>
 
 </body>
