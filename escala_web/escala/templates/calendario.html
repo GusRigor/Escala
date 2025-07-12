@@ -50,9 +50,8 @@ tbody tr:nth-child(even) {
   background: #f9f9f9;
 }
 
-/* Estilo para colunas de fim de semana */
 .col-fds {
-  background-color: #2e7d32a7; /* verde escuro */
+  background-color: #2e7d32a7;
   color: white;
 }
 
@@ -66,9 +65,8 @@ select {
   background: transparent;
   padding: 2px 4px;
   transition: border-color 0.3s ease;
-
-  -webkit-appearance: none;  /* Safari e Chrome */
-  -moz-appearance: none;     /* Firefox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   background-image: none;
   cursor: pointer;
@@ -79,7 +77,8 @@ select:focus {
 }
 
 button {
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-right: 5px;
   background: #4CAF50;
   color: white;
   padding: 8px 16px;
@@ -90,7 +89,44 @@ button {
 button:hover {
   background: #45a049;
 }
+
+pre {
+  background: #eee;
+  padding: 10px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.ocr-table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    width: 100%;
+    font-size: 12px;
+}
+.ocr-table th, .ocr-table td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+}
+.ocr-table thead {
+    background: #f0f0f0;
+}
+.ocr-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+#modal-cropper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 </head>
 <body>
 
@@ -110,8 +146,15 @@ button:hover {
       {% endfor %}
   </p>
 
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+
+    <p>
+      <strong>Enviar foto da escala:</strong><br>
+      <input type="file" id="foto_escala" accept="image/*">
+    </p>
+
+    <div id="ocr-result" style="margin-top:20px;"></div>
 
     <table>
       <thead>
@@ -162,9 +205,152 @@ button:hover {
       </tbody>
     </table>
 
-    <button type="submit">Salvar Escala</button>
+    <button type="submit" name="acao" value="salvar_escala">💾 Salvar Escala</button>
   </form>
 </div>
+
+<!-- Modal para cropper -->
+<div id="modal-cropper" style="
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none;
+    justify-content: center; align-items: center; z-index: 9999;
+">
+  <div style="
+      background: #fff; padding: 20px; border-radius: 8px;
+      max-width: 90vw; max-height: 90vh; overflow: auto;
+      display: flex; flex-direction: column; align-items: center;
+  ">
+    <h3>Corte a Imagem</h3>
+    <div style="
+        width: 100%; height: 60vh;
+        display: flex; justify-content: center; align-items: center;
+    ">
+      <img id="imagem-cropper"
+           style="max-width: 90%; max-height: 100%; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.08);" />
+    </div>
+    <div style="margin-top: 10px; text-align: right; width: 100%;">
+      <button id="btn-crop-confirm">✂️ Cortar e Processar</button>
+      <button id="btn-crop-cancel">❌ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- loading -->
+<div id="loading" style="
+  display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(255,255,255,0.8); z-index:9999; justify-content:center; align-items:center; font-size: 20px; color: #4CAF50;
+">
+  ⏳ Processando imagem...
+</div>
+
+<script>
+let cropper;
+
+document.getElementById('foto_escala').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const imgCropper = document.getElementById('imagem-cropper');
+    imgCropper.src = event.target.result;
+
+    if (cropper) {
+      cropper.destroy();
+    }
+
+    document.getElementById('modal-cropper').style.display = 'flex';
+
+    cropper = new Cropper(imgCropper, {
+      aspectRatio: NaN,
+      viewMode: 1
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('btn-crop-cancel').addEventListener('click', () => {
+  document.getElementById('modal-cropper').style.display = 'none';
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  document.getElementById('foto_escala').value = ""; 
+});
+
+document.getElementById('btn-crop-confirm').addEventListener('click', () => {
+  const canvas = cropper.getCroppedCanvas();
+  const base64 = canvas.toDataURL();
+
+  document.getElementById('modal-cropper').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+
+  fetch(window.location.href, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ cropped_image: base64, acao: 'processar_foto' })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('loading').style.display = 'none';
+    if (data.dias && data.linhas && data.linhas.length > 0) {
+      renderTabela(data.dias, data.linhas);
+    } else {
+      document.getElementById('ocr-result').innerHTML =
+        `<p style="color:red;">Nenhum texto encontrado.</p>`;
+    }
+  })
+  .catch(err => {
+    document.getElementById('loading').style.display = 'none';
+    console.error(err);
+    document.getElementById('ocr-result').innerHTML =
+      `<p style="color:red;">Erro ao processar a imagem.</p>`;
+  });
+});
+
+function renderTabela(dias, linhas) {
+  const container = document.getElementById("ocr-result");
+  container.innerHTML = ""; // limpa
+
+  const table = document.createElement("table");
+  table.classList.add("ocr-table");
+
+  const thead = document.createElement("thead");
+  const trHead = document.createElement("tr");
+  const thEmpty = document.createElement("th");
+  thEmpty.textContent = "Dia";
+  trHead.appendChild(thEmpty);
+
+  dias.forEach(dia => {
+    const th = document.createElement("th");
+    th.textContent = dia;
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  linhas.forEach((linha, idx) => {
+    const tr = document.createElement("tr");
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = `Turno ${idx+1}`;
+    tr.appendChild(tdLabel);
+
+    linha.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell || "";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  container.appendChild(table);
+};
+</script>
 
 </body>
 </html>

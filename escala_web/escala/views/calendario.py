@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.urls import reverse
 import calendar
 from datetime import date
@@ -11,6 +12,8 @@ from source.classes.escala import Escala
 from source.classes.geradores.gerador import Gerador
 from ..models.setor import Setor
 from ..models.preceptor import Preceptor
+from source.classes.ocr.processa_foto import _processa_foto_
+import json
 
 def calendario(request, ano, mes):
     ano = int(ano)
@@ -37,8 +40,41 @@ def calendario(request, ano, mes):
     setores = Setor.objects.filter(id__in=setores_ids)
     preceptores = Preceptor.objects.filter(id__in=preceptores_ids)
 
+    # POST com JSON (AJAX)
+    if request.method == "POST" and request.content_type == "application/json":
+        data = json.loads(request.body)
+        if data.get("acao") == "processar_foto":
+            imagem_base64 = data.get("cropped_image")
+            if imagem_base64:
+                linha1, linha2 = _processa_foto_(
+                    imagem_base64=imagem_base64,
+                    n_colunas=num_dias
+                )
+
+                tabela = [linha1, linha2]
+
+                # só para garantir: ajusta para ter num_dias colunas
+                for row in tabela:
+                    while len(row) < num_dias:
+                        row.append("")
+                    if len(row) > num_dias:
+                        row = row[:num_dias]
+
+                dias = list(range(1, num_dias+1))
+                return JsonResponse({
+                    "dias": dias,
+                    "linhas": tabela
+                })
+            else:
+                return JsonResponse({"erro": "Imagem não enviada."}, status=400)
+
+    # POST normal
     if request.method == "POST":
-        return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
+        acao = request.POST.get("acao")
+
+        if acao == "salvar_escala":
+            # Salva a escala
+            return _calendario_post_(request, ano, mes, turnos, dias_do_mes)
 
     contexto = {
         "instituicao": request.session.get('instituicao'),
@@ -51,23 +87,19 @@ def calendario(request, ano, mes):
         "dias_do_mes": dias_do_mes,
         "atividades": atividades,
         "turnos": turnos,
+        "ocr_texto": None,
     }
-    
-    _resgata_escala_(
-        request=request,
-        ano=ano,
-        mes=mes,
-        contexto=contexto
-    )
+
+    _resgata_escala_(request, ano, mes, contexto)
 
     return render(request, "calendario.html", contexto)
+
 
 def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     conversor = Conversor_HTML()
     data = to_date(ano, mes)
     atividades = []
 
-    # Dados fixos do contexto
     instituicao = request.session.get('instituicao')
     residente = request.session.get('residente')
     setores_ids = request.session.get('setores', [])
@@ -76,8 +108,6 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     setores = Setor.objects.filter(id__in=setores_ids)
     preceptores = Preceptor.objects.filter(id__in=preceptores_ids)
 
-
-        # Dados preenchidos no calendário
     for dia in dias_do_mes:
         numero = dia['numero']
         for turno in turnos:
@@ -105,6 +135,7 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
                     dia=date(ano, mes, numero)
                 )
                 atividades.append(atividade_model)
+
     calendario_model = Calendario(to_date(ano, mes), atividades)
     escala = Escala(
         instituicao,
@@ -113,7 +144,7 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
         preceptores,
         calendario_model
     )
-    
+
     _salva_escala_(
         request=request,
         instituicao=instituicao,
@@ -133,8 +164,8 @@ def _calendario_post_(request, ano, mes, turnos, dias_do_mes):
     }
     return render(request, "sucesso.html", contexto)
 
+
 def _salva_escala_(request, instituicao, residente, setores, preceptores, ano, mes, dias_do_mes, turnos):
-    # cria ou atualiza a escala do mês
     escala_db, created = EscalaMensal.objects.update_or_create(
         instituicao=instituicao,
         residente=residente,
@@ -146,11 +177,9 @@ def _salva_escala_(request, instituicao, residente, setores, preceptores, ano, m
     escala_db.setores.set(setores)
     escala_db.preceptores.set(preceptores)
 
-    # limpa os dias anteriores caso esteja atualizando
     if not created:
         escala_db.dias.all().delete()
 
-    # salva os dias/turnos
     for dia in dias_do_mes:
         numero = dia['numero']
         for turno in turnos:
@@ -164,6 +193,7 @@ def _salva_escala_(request, instituicao, residente, setores, preceptores, ano, m
                 turno=turno,
                 atividade=atividade
             )
+
 
 def _resgata_escala_(request, ano, mes, contexto):
     escala_salva = EscalaMensal.objects.filter(

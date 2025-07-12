@@ -1,10 +1,11 @@
-FROM python:3.8-slim
+FROM python:3.11-slim
 
 # Defina a pasta de trabalho
 WORKDIR /app
 
 # Instale LaTeX e dependências do sistema
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         texlive-latex-base \
         texlive-latex-recommended \
@@ -14,6 +15,8 @@ RUN apt-get update && \
         make \
         build-essential \
         && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libxext6
 
 # Copie os arquivos de dependências
 COPY requirements.txt /app/
